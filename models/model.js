@@ -2,17 +2,28 @@ import mongoose from 'mongoose';
 
 const urlSchema = new mongoose.Schema(
   {
-    shortId: {
+    shortID: {
       type: String,
       required: true,
       unique: true,
     },
+
     redirectURL: {
       type: String,
       required: true,
     },
+
     totalClicks: {
-      visitHistory: [{ timeStamp: { type: Number } }],
+      type: {
+        visitHistory: [
+          {
+            timeStamp: { type: Number }
+          }
+        ]
+      },
+      default: {
+        visitHistory: []
+      }
     }
   },
   { timestamps: true }
