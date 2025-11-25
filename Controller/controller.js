@@ -22,4 +22,14 @@ async function generateShortUrl(req, res) {
     return res.json({ id: shortID });
 }
 
-export { generateShortUrl };
+async function handleGetAnalytics(req,res){
+    const shortID= req.params.shortID;
+    const result = await URL.findOne({ shortID });
+    return res.json({
+        totalClicks: result.totalClicks.visitHistory.length,
+        analytics: result.totalClicks.visitHistory,
+    });
+
+}
+
+export { generateShortUrl, handleGetAnalytics};
