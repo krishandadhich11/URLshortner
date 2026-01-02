@@ -16,18 +16,27 @@ connectToMongoDB(
 app.use("/url", globalLimiter, urlRoute);
 
 app.get("/:shortID", async (req, res) => {
-  const shortID = req.params.shortID;
-  const entry = await URL.findOneAndUpdate(
-    {
-      shortID,
-    },
-    {
-      $push: {
-        "totalClicks.visitHistory": { timeStamp: Date.now() },
+  try {
+    const { shortID } = req.params;
+
+    const entry = await URL.findOneAndUpdate(
+      { shortID },
+      {
+        $push: {
+          "totalClicks.visitHistory": { timeStamp: Date.now() },
+        },
       },
+      { new: true }
+    );
+
+    if (!entry) {
+      return res.status(404).json({ error: "Short URL not found" });
     }
-  );
-  res.redirect(entry.redirectURL);
+
+    res.redirect(entry.redirectURL);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 app.listen(PORT, () => console.log(`Server is running on port:${PORT}`));
